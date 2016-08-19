@@ -14,7 +14,10 @@ RUN apt-get install -y build-essential libssl-dev libffi-dev
 RUN apt-get install -y python python-pip python-setuptools python-dev python-psycopg2 postgresql-client postgresql-client-common 
 
 # install airflow
-RUN pip install "airflow[hive]" cryptography
+RUN pip install "airflow[hive]" cryptography Celery
+
+# install redis
+RUN apt-get install -y redis-tools
 
 # clone phl-airflow
 RUN apt-get install -y git alien wget libaio1
