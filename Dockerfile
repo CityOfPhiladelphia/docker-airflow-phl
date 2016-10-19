@@ -9,6 +9,8 @@ MAINTAINER Nick Weber <nicholas.weber@phila.gov>
 # update local package database
 RUN apt-get -y update
 
+Run apt-get install -y vim
+
 # install phl-airflow dependencies
 RUN apt-get install -y build-essential libssl-dev libffi-dev
 RUN apt-get install -y python python-pip python-setuptools python-dev python-psycopg2 postgresql-client postgresql-client-common 
@@ -46,8 +48,12 @@ ENV ORACLE_HOME /usr/lib/oracle/12.1/client64
 RUN airflow initdb
 
 #CMD airflow webserver -p 8080
+
 # clone phl-airflow
 RUN git clone https://github.com/CityOfPhiladelphia/phl-airflow.git ~/phl-airflow ; cd ~/phl-airflow
+
+# setup $AIRFLOW_HOME
+ENV AIRFLOW_HOME=~/phl-airflow
 
 # install dependencies
 #RUN pip install -r requirements.txt
