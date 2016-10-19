@@ -9,7 +9,9 @@
 git clone https://github.com/nwebz/Docker-airflowphl.git && cd Docker-airflowphl
 
 # to build Dockerfile run:
-docker build -t <container tag> </path/to/Dockerfile>
+make
+
+                
 
 # Or pull from Docker index:
 docker pull nwebz/phl-airflow7

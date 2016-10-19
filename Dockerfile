@@ -7,17 +7,21 @@ FROM ubuntu:16.04
 MAINTAINER Nick Weber <nicholas.weber@phila.gov>
 
 # update local package database
-RUN apt-get update
+RUN apt-get -y update
 
 # install phl-airflow dependencies
 RUN apt-get install -y build-essential libssl-dev libffi-dev
 RUN apt-get install -y python python-pip python-setuptools python-dev python-psycopg2 postgresql-client postgresql-client-common 
 
 # install airflow
-RUN pip install "airflow[hive]" cryptography
+RUN pip install "airflow[hive]" cryptography Celery
+
+# install redis
+RUN apt-get install -y redis-tools
 
 # clone phl-airflow
 RUN apt-get install -y git alien wget libaio1
+
 
 # grab instant sql-plus instant oracle client/ rename downloaded file and install with alien
 RUN wget https://www.dropbox.com/s/ubgeht3m59bhfh1/oracle-instantclient12.1-sqlplus-12.1.0.2.0-1.x86_64.rpm?dl=0
@@ -38,15 +42,14 @@ RUN alien -i oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
 ENV LD_LIBRARY_PATH /usr/lib/oracle/12.1/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 ENV ORACLE_HOME /usr/lib/oracle/12.1/client64
 
+# initialize database
+RUN airflow initdb
+
+#CMD airflow webserver -p 8080
 # clone phl-airflow
-#RUN git clone https://github.com/CityOfPhiladelphia/phl-airflow.git ~/home && cd ~/home/phl-airflow
+RUN git clone https://github.com/CityOfPhiladelphia/phl-airflow.git ~/phl-airflow ; cd ~/phl-airflow
 
 # install dependencies
 #RUN pip install -r requirements.txt
-
-# initialize database
-#RUN airflow initdb
-
-#RUN airflow webserver -p 8080
 
 USER root
