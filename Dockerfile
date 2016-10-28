@@ -1,22 +1,32 @@
 # Dockerfile for phl-airflow
 # find it here: https://github.com/CityOfPhiladelphia/phl-airflow
-# use Ubuntu (16.04) base image
-FROM ubuntu:16.04
+# pull Ubuntu (16.04) base image
+FROM ubuntu
 
 # set maintainer
 MAINTAINER Nick Weber <nicholas.weber@phila.gov>
 
 # update local package database
-RUN apt-get -y update
+RUN apt-get -y update 
 
-Run apt-get install -y vim
+# install editors
+Run apt-get install -y vim && apt-get install -y nano
+#RUN git clone git://github.com/amix/vimrc.git ~/.vim_runtime ; sh ~/.vim_runtime/install_basic_vimrc.sh
 
 # install phl-airflow dependencies
 RUN apt-get install -y build-essential libssl-dev libffi-dev
-RUN apt-get install -y python python-pip python-setuptools python-dev python-psycopg2 postgresql-client postgresql-client-common 
-
-# install airflow
-RUN pip install "airflow[hive]" cryptography Celery
+RUN apt-get install -y python 
+RUN apt-get install -y python-pip 
+RUN apt-get install -y postgresql 
+RUN apt-get install -y postgresql-contrib
+RUN apt-get install -y python-setuptools 
+RUN apt-get install -y libc-dev-bin 
+RUN apt-get install -y libc-dev 
+RUN apt-get install -y python-dev 
+RUN apt-get install -y libpq-dev
+## install airflow
+RUN pip install "airflow[postgres]"
+RUN pip install cryptography Celery
 
 # install redis
 RUN apt-get install -y redis-tools
@@ -52,9 +62,12 @@ RUN git clone https://github.com/CityOfPhiladelphia/phl-airflow.git ~/phl-airflo
 
 # setup $AIRFLOW_HOME
 ENV AIRFLOW_HOME=~/phl-airflow
+ENV AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN=my_conn_string
 
 # initialize database
-RUN airflow initdb
+# RUN airflow initdb
 
 # install dependencies
 RUN pip install -r ~/phl-airflow/requirements.txt
